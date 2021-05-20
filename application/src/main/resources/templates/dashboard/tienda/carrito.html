@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<body>
+<!--Aquí va el contenido principal...-->
+
+<div class="content px-0 mt-2" th:fragment="contenido">
+    <div class="container px-0">
+        <div class="row px-0 mx-0">
+            <div class="col-12 col-lg-8 px-0 px-md-3">
+                <div class="card my-3">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title">Carrito de Compras</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="h-100 float-left d-flex align-items-center">
+                                    <h4 class="mb-0">
+                                        Hay <span id="cantEle"
+                                                  th:text="${#maps.size(carrito)>0}?${#aggregates.sum(carrito.values())}:0"></span>
+                                        producto(s).
+                                    </h4>
+                                </div>
+                                <div class="float-right">
+                                    <button id="cleanBtn" class="btn btn-info btn-round p-2" onclick="limpiar();"
+                                            th:disabled="${#maps.size(carrito)==0}">
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12" id="carrito">
+                                <div th:each="item, iStat:${carrito}" class="row py-3 border-primary"
+                                     th:classappend="${iStat.first}?'':'border-top'"
+                                     th:id="'item'+${item.key.idProducto}">
+                                    <div class="col-4 px-0 px-md-3">
+                                        <div class="aspect1x1">
+                                            <div>
+                                                <a th:href="'/v/producto/'+${item.key.idProducto}+'/'">
+                                                    <img class="imgContain"
+                                                         th:src="${item.key.imageUrl != null}?${item.key.imageUrl}:'/svg/no-imagen.svg'"
+                                                         rel="nofollow" alt="Card image cap">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="row">
+                                            <div class="col-12 border-bottom mb-md-3">
+                                                <a class="float-left"
+                                                   th:href="'/v/producto/'+${item.key.idProducto}+'/'">
+                                                    <h5 class="font-weight-bold text-dark mb-0">
+                                                        [[${item.key.nombre}]]</h5>
+                                                </a>
+                                                <div class="float-right">
+                                                    <a class="text-danger" href="#"
+                                                       th:onclick="'eliminar('+${item.key.idProducto}+');'">
+                                                        <i class="material-icons">close</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 align-self-end">
+                                                <div class="float-left">Precio:</div>
+                                                <div class="float-right">
+                                                    RD$ <span th:id="'valor'+${item.key.idProducto}">[[${#numbers.formatDecimal(item.key.costo, 0, 'COMMA', 2,'POINT')}]]</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 align-self-end">
+                                                <div class="float-left">Cantidad:</div>
+                                                <div class="float-right">
+                                                    <div th:id="'uno'+${item.key.idProducto}">
+                                                        <span class="cantidad" th:id="'cant'+${item.key.idProducto}">[[${item.value}]]</span>
+                                                        <a class="text-info" href="#"
+                                                           th:onclick="'editar('+${item.key.idProducto}+');'">
+                                                            <i class="material-icons">edit</i>
+                                                        </a>
+                                                    </div>
+                                                    <form class="d-none" th:id="'dos'+${item.key.idProducto}"
+                                                          th:onsubmit="'return modificar('+${item.key.idProducto}+');'">
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" step="1"
+                                                                   min="0" value="0"
+                                                                   th:id="'nuevo'+${item.key.idProducto}"/>
+                                                            <button class="btn btn-info" type="submit">Ok</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 align-self-end">
+                                                <div class="float-left">Total:</div>
+                                                <div class="float-right">
+                                                    RD$ <span class="vTotal" th:id="'total'+${item.key.idProducto}">[[${#numbers.formatDecimal(item.key.costo * item.value , 0,'COMMA', 2,'POINT')}]]</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 px-0 px-md-3">
+                <div class="card my-3">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title">Resumen</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="float-left">
+                                    Total:
+                                </div>
+                                <div class="float-right">
+                                    RD$ [[${#numbers.formatDecimal(total , 0,'COMMA', 2,'POINT')}]]
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <a id="checkout" href="/v/checkout" class="btn btn-info float-right" th:classappend="${#maps.size(carrito)==0}?'disabled':''">
+                                    Proceder a pagar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+    <script>
+        var errorMsg = "Error: No existe.";
+        var errorProcess = "Error: Hubo un error en el procesamiento.";
+
+        function update() {
+            let countElemento = 0;
+            $(".cantidad").each(function () {
+                countElemento += Number($(this).text());
+            });
+            $('#cantEle').text(countElemento);
+            if(countElemento==0) {
+                $('#checkout').addClass("disabled");
+            }
+        }
+
+        function limpiar() {
+            $.post(
+                "/api/tienda/carrito/limpiar",
+                {},
+                function (data) {
+                    if (data) {
+                        $('#carrito').text("");
+                        $('#cleanBtn').attr("disabled", true);
+                        update();
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            ).fail(function () {
+                alert(errorProcess);
+            });
+        }
+
+        function eliminar(id) {
+            datos = {
+                id: id
+            }
+            $.post(
+                "/api/tienda/carrito/eliminar",
+                datos,
+                function (data) {
+                    if (data) {
+                        $('#item' + id).remove();
+                        let primero = $('#carrito').children()[0];
+                        if (primero != null)
+                            primero.classList.remove('border-top');
+                        update();
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            ).fail(function () {
+                alert(errorProcess);
+            });
+        }
+
+        function modificar(id) {
+            let nuevaCant = $('#nuevo' + id).val();
+            let valor = Number.parseFloat($('#valor' + id).text().replaceAll(',', ''));
+            let datos = {
+                id: id,
+                cantidad: nuevaCant
+            }
+            $.post(
+                "/api/tienda/carrito/asignar",
+                datos,
+                function (data) {
+                    if (data) {
+                        if (nuevaCant > 0) {
+                            $('#cant' + id).text(nuevaCant);
+                            $('#total' + id).text((valor * nuevaCant).toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }));
+                        } else {
+                            $('#item' + id).remove();
+                            let primero = $('#carrito').children()[0];
+                            if (primero != null)
+                                primero.classList.remove('border-top');
+                        }
+                        update();
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            ).fail(function () {
+                alert(errorProcess);
+            }).always(function () {
+                $('#uno' + id).toggleClass('d-none');
+                $('#dos' + id).toggleClass('d-none');
+            });
+            return false;
+        }
+
+        function editar(id) {
+            $('#uno' + id).toggleClass('d-none');
+            $('#nuevo' + id).val(parseFloat($('#cant' + id).text()));
+            $('#dos' + id).toggleClass('d-none');
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

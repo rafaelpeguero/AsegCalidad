@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <!--Titulo de la tarjeta-->
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Notificaciones</h2>
+                </div>
+                <!--Cuerpo de la tarjeta-->
+                <div class="card-body table-responsive">
+                    <div class="cambio collapse" id="carga">
+                        <h1>Cargando...</h1>
+                    </div>
+                    <div class="nohay collapse" id="carga">
+                        <h1>No tiene notificaciones nuevas...</h1>
+                    </div>
+                    <div class="cambio collapse show" id="contenido">
+                        <button onclick="return buscarNotificaciones(0)" class="btn btn-info pull-right">Mostrar todas
+                        </button>
+                        <button onclick="return buscarNotificaciones(1)" class="btn btn-info pull-right">Mostrar
+                            nuevas</button>
+                        <button onclick="return buscarNotificaciones(2)" class="btn btn-info pull-right">Mostrar
+                            vistas</button>
+                        <button onclick="return marcarNuevo()" class="btn btn-info pull-right">Marcar nuevas como
+                            vistas</button>
+                    </div>
+                    <div id="tab">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tema</th>
+                                    <th>Fecha</th>
+                                    <th>Mensaje</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tData">
+                                <tr>
+                                    <td></td>
+                                    <!--ID-->
+                                    <td></td>
+                                    <!--Tema-->
+                                    <td></td>
+                                    <!--Mensaje-->
+                                    <td></td>
+                                    <!--Fecha-->
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="justify-content-center d-flex">
+                        <nav>
+                            <ul class="pagination" id="navPage">
+                                <li class="page-item border">
+                                    <a onclick="setPage(1);"><i class="fa fa-angle-double-left page-link"></i></a>
+                                </li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(currentPage-1);"><i class="fa fa-angle-left page-link"></i></a>
+                                </li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">1</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">2</a></li>
+                                <li class="page-item border active"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">4</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">5</a></li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(currentPage+1);"><i class="fa fa-angle-right page-link"></i></a>
+                                </li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(maxPage);"><i
+                                            class="fa fa-angle-double-right page-link"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+<th:block th:fragment="pageScripts">
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var maxPage = 20;
+        var cantShow = 10;
+        var currentPage;
+        var navPage = [];
+        var currId = "";
+        var currName = "";
+        var valor = 0;
+        var tableBody;
+        var sample;
+        var disponible = true;
+
+        function cambiar() {
+            if (disponible) {
+                document.getElementById("carga").classList.add("show");
+                document.getElementById("contenido").classList.remove("show");
+            } else {
+                document.getElementById("carga").classList.remove("show");
+                document.getElementById("contenido").classList.add("show");
+            }
+            disponible = !disponible;
+        }
+
+        function getIdValue(node) {
+            return node.parentNode.parentNode.children[0].innerText;
+        }
+
+        function eliminar(node) {
+            let idDelete = getIdValue(node);
+        }
+
+        function modificar(node) {
+            let idMod = getIdValue(node);
+        }
+
+        function setPage(page) {
+            page = Number(page);
+            if (page == currentPage)
+                return;
+            if (page < 1 || page > maxPage)
+                return;
+            let datos = {
+                pagina: page - 1,
+                mostrar: cantShow,
+                nuevas: valor
+            };
+            var modal = $('#errorModal');
+            if (disponible)
+                cambiar();
+            $.post(
+                "/api/historial/fetchNotificaciones",
+                datos,
+                function (data) {
+                    currentPage = page;
+                    let temp;
+                    for (let i = 0; i < navPage.length; i++) {
+                        temp = currentPage + i - 2;
+                        navPage[i].firstChild.innerText = temp;
+                        if (temp < 1 || temp > maxPage)
+                            navPage[i].classList.add("d-none");
+                        else
+                            navPage[i].classList.remove("d-none");
+                    }
+                    tableBody.innerHTML = '';
+                    //var fechar;
+                    // Escribir los datos...
+                    for (let i = 0; i < data.length; i++) {
+                        sample.children[0].innerText = data[i].idNotificacion;
+                        sample.children[1].innerText = data[i].tema;
+                        
+
+                        sample.children[2].innerText = data[i].fecha.split('T')[0];
+
+                        sample.children[3].innerText = data[i].mensaje;
+                        tableBody.appendChild(sample.cloneNode(true));
+                    }
+                }
+            ).fail(function () {
+                modal.find('.modal-body p').text('La página no cargo.');
+                modal.find('.modal-header h5').html('Error');
+                $('#errorModal').modal('show');
+            }).always(function () {
+                cambiar();
+            });
+        }
+
+        function marcarNuevo() {
+
+            let datos = {
+                id: "Marcar",
+                nombre: "Todas"
+            };
+            var modal = $('#errorModal');
+            $.post(
+                "/api/historial/marcarTodas",
+                datos,
+                function (data) {
+                    if (data) {
+                        modal.find('.modal-body p').text('Todas las notificaciones han sido marcadas como vistas.');
+                        modal.find('.modal-header h5').html('Información');
+                        $('#errorModal').modal('show');
+                    }
+                }
+            ).fail(function () {
+                modal.find('.modal-body p').text('No se pudo enviar.');
+                modal.find('.modal-header h5').html('Error');
+                $('#errorModal').modal('show');
+                cambiar();
+            });
+            return false;
+        }
+
+        function buscarNotificaciones(razon) {
+            if (disponible)
+                cambiar();
+            currId = $("#idUsuario").val();
+            currName = $("#nombreUsuario").val();
+            valor = Number(razon);
+            let datos = {
+                id: currId,
+                nombre: currName,
+                nuevas: valor
+            };
+            var modal = $('#errorModal');
+            $.post(
+                "/api/historial/contarNotificaciones",
+                datos,
+                function (data) {
+                    maxPage = Math.floor(data / cantShow) + 1;
+                    currentPage = -1;
+                    setPage(1);
+                }
+            ).fail(function () {
+                modal.find('.modal-body p').text('La página no cargo.');
+                modal.find('.modal-header h5').html('Error');
+                $('#errorModal').modal('show');
+                cambiar();
+            });
+            return false;
+        }
+
+        $(document).ready(function () {
+            tableBody = document.getElementById("tData");
+            sample = tableBody.children[0].cloneNode(true);
+            contenido = document.getElementById("contenido");
+            var targetPaging = document.getElementById("navPage");
+            for (let i = 2; i < 7; i++) {
+                navPage.push(targetPaging.children[i]);
+            }
+            buscarNotificaciones(1);
+        });
+    </script>
+</th:block>
+
+
+</body>
+
+</html>

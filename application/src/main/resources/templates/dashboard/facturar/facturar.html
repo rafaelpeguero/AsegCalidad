@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <!--Titulo de la tarjeta-->
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Facturación</h2>
+                </div>
+                <!--Cuerpo de la tarjeta-->
+                <div class="card-body table-responsive">
+                    <form>
+                        <div class="form-check form-check-radio row">
+                            <div class="col-12">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="tipo" value="Normal" checked>
+                                    Normal
+                                    <span class="circle">
+                                        <span class="check"></span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="tipo" value="Fiscal">
+                                    Fiscal
+                                    <span class="circle">
+                                        <span class="check"></span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="collapse col-12" id="colFiscal">
+                                <input class="form-control" type="text" id="fiscal" placeholder="Comprobante Fiscal">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="tipo" value="Usuario">
+                                    Usuario Registrado
+                                    <span class="circle">
+                                        <span class="check"></span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="collapse col-12" id="colUsuario">
+                                <input class="form-control" type="text" id="nameUser" placeholder="Nombre Usuario">
+                                <select class="form-control" id="selUser" data-style="btn btn-link"
+                                        data-live-search="true">
+                                    <option value="" disabled selected>Selecione el usuario</option>
+                                    <optgroup id="opUser" label="Usuarios:">
+
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dropdown-divider"></div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="float-right">
+                                <button class="btn btn-info" data-toggle="modal" data-target="#addProduct"
+                                        onclick="resetSearch();">Añadir
+                                    producto
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th class="text-right">Precio</th>
+                                    <th class="text-right">Cantidad</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                                </thead>
+                                <tbody id="detalles">
+                                <tr>
+                                    <td class="td-actions">
+                                        <button class="btn btn-danger" onclick="quitar(this)">
+                                            <span class="material-icons">close</span>
+                                        </button>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">RD$ <span></span></td>
+                                    <td><input class="form-control text-right float-right cantDet" type="number" min="1"
+                                               step="1"
+                                               value="1" onchange="cM(this)"></td>
+                                    <td class="text-right">RD$ <span class="mDet">3</span></td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th class="text-right">Total:</th>
+                                    <th class="text-right">RD$ <span id="tDet">0.00</span></th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="col-12">
+                            <div class="float-right">
+                                <a class="btn btn-danger" href="/dashboard/facturar">Cancelar</a>
+                                <button class="btn btn-info" onclick="validar();">Continuar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="row">
+                        <div class="card">
+
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title">Buscar productos</h4>
+                            </div>
+                            <div class="card-body table-responsive">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="addProduct">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Añadir producto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label class="bmd-label-floating">Id</label>
+                                <input id="idProducto" class="form-control" type="number">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md">
+                            <div class="form-group bmd-form-group">
+                                <label class="bmd-label-floating">Nombre</label>
+                                <input id="nombreProducto" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col d-md-none"></div>
+                        <button type="submit" onclick="buscarProducto();" class="btn btn-info">Buscar</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th class="text-center">Nombre</th>
+                                    <th class="text-right">Costo</th>
+                                    <th class="text-right">Cantidad</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id="tData">
+                                <tr>
+                                    <td>3</td>
+                                    <td>Nuevo nombre</td>
+                                    <td class="text-right">RD$ <span>3</span></td>
+                                    <td><input class="form-control text-right float-right" type="number" min="1"
+                                               step="1"
+                                               value="1"></td>
+                                    <td class="text-right">
+                                        <a class="btn btn-info text-light" data-dismiss="modal"
+                                           onclick="addDetalle(this);">
+                                            Añadir
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="justify-content-center d-flex">
+                                <nav>
+                                    <ul class="pagination" id="navPage">
+                                        <li class="page-item border">
+                                            <a onclick="setPage(1);"><i
+                                                    class="fa fa-angle-double-left page-link"></i></a>
+                                        </li>
+                                        <li class="page-item border">
+                                            <a onclick="setPage(currentPage-1);"><i
+                                                    class="fa fa-angle-left page-link"></i></a>
+                                        </li>
+                                        <li class="page-item border"><a onclick="setPage(this.innerText);"
+                                                                        class="page-link"
+                                                                        href="#">1</a></li>
+                                        <li class="page-item border"><a onclick="setPage(this.innerText);"
+                                                                        class="page-link"
+                                                                        href="#">2</a></li>
+                                        <li class="page-item border active"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item border"><a onclick="setPage(this.innerText);"
+                                                                        class="page-link"
+                                                                        href="#">4</a></li>
+                                        <li class="page-item border"><a onclick="setPage(this.innerText);"
+                                                                        class="page-link"
+                                                                        href="#">5</a></li>
+                                        <li class="page-item border">
+                                            <a onclick="setPage(currentPage+1);"><i
+                                                    class="fa fa-angle-right page-link"></i></a>
+                                        </li>
+                                        <li class="page-item border">
+                                            <a onclick="setPage(maxPage);"><i
+                                                    class="fa fa-angle-double-right page-link"></i></a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="registrar">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Método de Pago</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div>
+                                <h4>Opciones:</h4>
+                            </div>
+                            <ul class="nav nav-pills" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist"
+                                       aria-expanded="true">
+                                        Efectivo
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#link2" role="tablist"
+                                       aria-expanded="false">
+                                        Con tarjeta
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>Llenar:</h4>
+                        </div>
+                        <div class="col-12 d-flex text-monospace">
+                            <div class="align-self-center">
+                                Total:&nbsp;&nbsp;&nbsp;&nbsp;RD$
+                            </div>
+                            <span class="bmd-form-group is-filled w-100"><input id="totalR"
+                                                                                class="form-control text-right"
+                                                                                type="number" readonly></span>
+                        </div>
+                        <div class="col-12">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="link1" aria-expanded="true">
+                                    <div class="row text-monospace">
+                                        <div class="col-12 d-flex">
+                                            <div class="align-self-center">
+                                                Efectivo:&nbsp;RD$
+                                            </div>
+                                            <span class="bmd-form-group is-filled w-100"><input id="efectivo"
+                                                                                                class="form-control text-right"
+                                                                                                type="text" min="0"
+                                                                                                step="0.01"
+                                                                                                value="0.00"></span>
+                                        </div>
+                                        <div class="col-12 d-flex">
+                                            <div class="align-self-center">
+                                                Devuelta:&nbsp;RD$
+                                            </div>
+                                            <span class="bmd-form-group is-filled w-100"><input id="devR"
+                                                                                                class="form-control text-right"
+                                                                                                type="text"
+                                                                                                readonly></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="link2" aria-expanded="false">
+                                    <div class="text-light">
+                                        ~~~
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-info" onclick="procesar()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+    <script>
+        var current = "Normal";
+        var opcion = document.createElement("OPTION");
+        var usuarios = null;
+        var selUser = null;
+        var detSample = null;
+        var detalles = null;
+        var transaccion = "";
+
+        function calcularTotal() {
+            var total = 0;
+            $(".mDet").each(function () {
+                total += Number(this.innerText.replace(/,/g, ""));
+            });
+            $("#tDet").text(total.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }));
+        }
+
+        function addDetalle(node) {
+            var agregar = node.parentNode.parentNode.cloneNode(true);
+            var id = "item" + agregar.children[0].innerText;
+            var existe = document.getElementById(id);
+            if (existe == null) {
+                detSample.id = id;
+                detSample.children[1].innerText = agregar.children[0].innerText;
+                detSample.children[2].innerText = agregar.children[1].innerText;
+                detSample.children[3].children[0].innerText = agregar.children[2].children[0].innerText;
+                detSample.children[4].children[0].children[0].value = agregar.children[3].children[0].children[0].value;
+                calcularMonto(detSample);
+                detalles.appendChild(detSample.cloneNode(true));
+            } else {
+                existe.children[1].innerText = agregar.children[0].innerText;
+                existe.children[2].innerText = agregar.children[1].innerText;
+                existe.children[3].innerText = agregar.children[2].innerText;
+                existe.children[4].children[0].children[0].value = agregar.children[3].children[0].children[0].value;
+                calcularMonto(existe);
+            }
+            calcularTotal();
+        }
+
+        function quitar(node) {
+            let d = node.parentNode.parentNode;
+            d.parentNode.removeChild(d);
+            calcularTotal();
+        }
+
+        function calcularMonto(node) {
+            var valor = node.children[3].children[0].innerText;
+            valor = valor.replace(/,/g, "");
+            node.children[5].children[0].innerText = (Number(valor) * node.children[4].children[0].children[0].value).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function cM(node) {
+            calcularMonto(node.parentNode.parentNode.parentNode);
+            calcularTotal();
+        }
+
+        function updateUserOption(valor) {
+            $.post(
+                "/api/usuario/selectpick",
+                {
+                    "usuario": valor
+                },
+                function (data) {
+                    usuarios.innerHTML = "";
+                    $("#selUser").val("");
+                    for (let i = 0; i < data.length; i++) {
+                        opcion.value = data[i];
+                        opcion.innerText = data[i];
+                        usuarios.appendChild(opcion.cloneNode(true));
+                    }
+                }
+            );
+        }
+
+        function validar() {
+            switch (current) {
+                case "Fiscal":
+                    if ($('#fiscal').val().length < 1) {
+                        alert("Introducir el comprobante fiscal.")
+                        return;
+                    }
+                    break;
+                case "Usuario":
+                    if ($('#selUser').val() == null) {
+                        alert("Selecionar usuario.")
+                        return;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (detalles.children.length == 0) {
+                alert("No se puede facturar sin productos.");
+                return;
+            }
+            $('a[href="#link1"]').tab('show');
+            $("#totalR").val($("#tDet").text().replace(/,/g, ""));
+            $("#efectivo").val('0.00');
+            transaccion = "efectivo";
+            $("#devR").val(parseFloat(-$("#totalR").val()).toFixed(2));
+            $('#registrar').modal('show');
+        }
+
+        function procesar() {
+            var datos = {
+                "tipo": current,
+                "total": Number($("#tDet").text().replace(/,/g, "")),
+                "transaccion": transaccion
+            };
+            switch (current) {
+                case "Fiscal":
+                    datos["RNC"] = $('#fiscal').val();
+                    break;
+                case "Usuario":
+                    datos["usuario"] = $('#selUser').val();
+                    break;
+                default:
+                    break;
+            }
+            var lDet = [];
+            var localDet = detalles.children;
+            for (let i = 0; i < localDet.length; i++) {
+                lDet.push({
+                    idProducto: parseInt(localDet[i].children[1].innerText),
+                    precio: Number(localDet[i].children[3].children[0].innerText.replace(/,/g, "")),
+                    cantidad: parseInt(localDet[i].children[4].children[0].children[0].value),
+                    monto: Number(localDet[i].children[5].children[0].innerText.replace(/,/g, ""))
+                });
+            }
+            datos["detalles"] = lDet;
+            console.log(datos);
+            $.ajax({
+                type:"POST",
+                url: "/api/facturacion/registrar",
+                data: JSON.stringify(datos),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if(data.first) {
+                        window.location.href = "/dashboard/facturar/ver/"+data.second+"/";
+                    } else {
+                        alert(data.second);
+                    }
+                }
+            }).fail(function () {
+                alert("Error: Hubo un error a registrar la factura.");
+            });
+        }
+
+        $(document).ready(function () {
+            $("input[name='tipo']").click(function () {
+                if (this.value == current)
+                    return;
+                current = this.value;
+                $('#colUsuario').collapse('hide');
+                $('#colFiscal').collapse('hide');
+                switch (this.value) {
+                    case "Fiscal":
+                        $('#fiscal').val("");
+                        $('#colFiscal').collapse('show');
+                        break;
+                    case "Usuario":
+                        $("#nameUser").val("");
+                        updateUserOption("");
+                        $('#colUsuario').collapse('show');
+                        break;
+                    default:
+                        break;
+                }
+            });
+            $("#nameUser").on("input", function () {
+                updateUserOption(this.value);
+                console.log(this.value);
+            });
+            $("#efectivo").on("input", function () {
+                $("#devR").val(parseFloat(this.value - $("#totalR").val()).toFixed(2));
+            });
+            $('a[href="#link1"]').on('show.bs.tab', function () {
+                $("#efectivo").val('0.00');
+                transaccion = "efectivo";
+            });
+            $('a[href="#link2"]').on('show.bs.tab', function () {
+                $("#efectivo").val('0.00');
+                transaccion = "tarjeta";
+            });
+            usuarios = document.getElementById("opUser");
+            selUser = document.getElementById("selUser");
+            updateUserOption("");
+            detalles = document.getElementById("detalles");
+            detSample = detalles.children[0].cloneNode(true);
+            detalles.innerText = "";
+        });
+    </script>
+    <script>
+        var maxPage = 20;
+        var cantShow = 5;
+        var currentPage;
+        var navPage = [];
+        var currId = "";
+        var currName = "";
+        var tableBody;
+        var sample;
+
+        function setPage(page) {
+            page = Number(page);
+            if (page == currentPage)
+                return;
+            if (page < 1 || page > maxPage)
+                return;
+            let datos = {
+                id: currId,
+                nombre: currName,
+                pagina: page - 1,
+                mostrar: cantShow
+            };
+            $.post(
+                "/api/producto/fetch",
+                datos,
+                function (data) {
+                    currentPage = page;
+                    let temp;
+                    for (let i = 0; i < navPage.length; i++) {
+                        temp = currentPage + i - 2;
+                        navPage[i].firstChild.innerText = temp;
+                        if (temp < 1 || temp > maxPage)
+                            navPage[i].classList.add("d-none");
+                        else
+                            navPage[i].classList.remove("d-none");
+                    }
+                    tableBody.innerHTML = '';
+                    for (let i = 0; i < data.length; i++) {
+                        sample.children[0].innerText = data[i].idProducto;
+                        sample.children[1].innerText = data[i].nombre;
+                        sample.children[2].children[0].innerText = data[i].costo.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                        tableBody.appendChild(sample.cloneNode(true));
+                    }
+                }
+            ).fail(function () {
+                alert("Error: La página de productos no cargo.");
+            });
+        }
+
+        function buscarProducto() {
+            currId = $("#idProducto").val();
+            currName = $("#nombreProducto").val();
+            let datos = {
+                id: currId,
+                nombre: currName
+            };
+            $.post(
+                "/api/producto/contar",
+                datos,
+                function (data) {
+                    maxPage = Math.ceil(data / cantShow);
+                    currentPage = -1;
+                    setPage(1);
+                }
+            ).fail(function () {
+                alert("Error: La búsqueda no fue ejecutada.");
+            });
+            return false;
+        }
+
+        function resetSearch() {
+            $("#idProducto").val("");
+            $("#nombreProducto").val("");
+            buscarProducto();
+        }
+
+        $(document).ready(function () {
+            tableBody = document.getElementById("tData");
+            sample = tableBody.children[0].cloneNode(true);
+            contenido = document.getElementById("contenido");
+            var targetPaging = document.getElementById("navPage");
+            for (let i = 2; i < 7; i++) {
+                navPage.push(targetPaging.children[i]);
+            }
+            buscarProducto();
+        });
+    </script>
+</th:block>
+</body>
+
+</html>

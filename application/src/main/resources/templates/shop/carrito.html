@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <th:block th:include="fragments/tienda_frag :: head"></th:block>
+    <link href="/css/carrito.css" rel="stylesheet"/>
+    <title>Mango SLR - Carrito de Compras</title>
+</head>
+<body class="d-flex flex-column">
+
+<div th:replace="fragments/tienda_frag :: header"></div>
+
+<div class="container my-md-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row pt-md-2 pl-md-2 border-bottom">
+                <div class="col">
+                    <h4 class="h4-responsive font-weight-bold"><b>Carrito de Compra</b></h4>
+                </div>
+                <div class="col d-none d-md-block align-self-center text-right text-muted">3 productos</div>
+            </div>
+            <div class="row-cols-1">
+                <div class="col border-bottom">
+                    <div class="row">
+                        <div class="col-4 col-sm-3 col-lg-2">
+                            <img class="icon-cart" src="https://i.imgur.com/1GrakTl.jpg">
+                        </div>
+                        <div class="col">
+                            <div class="row h-100 align-items-end pb-1">
+                                <div class="col-12 text-truncate mb-auto font-weight-bold">
+                                    Como se llame este item, se llamara, pero por ahora se necesita un nombre largo sin
+                                    sentido para probar que funcione en todos los casos sin importar que tan largo y sin
+                                    sentido sea esta oración porque el punto es probar.
+                                </div>
+                                <div class="col-12 text-right">RD$&#160;123456.00</div>
+                                <div class="col-10 col-lg-6 text-lg-center text-left text-white">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <button onclick="down(this)" class="btn btn-sm cyan m-0 px-3" type="button">
+                                                <i class="fas fa-minus"></i></button>
+                                        </div>
+                                        <input class="w-25 text-center" type="number" min="0" step="1" value="20">
+                                        <div class="input-group-append">
+                                            <button onclick="up(this)" class="btn btn-sm cyan m-0 px-3" type="button"><i
+                                                    class="fas fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 col-lg-6 order-lg-4"><span class="close">&#10005;</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row border rounded-sm">
+                <div class="col">
+                    <div class="pt-md-3">
+                        <h5><b>Resumen</b></h5>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="row mb-3">
+                        <div class="col">Sub-total</div>
+                        <div class="col text-right">RD$&#160;132.00</div>
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label for="delivery">
+                                Delivery:
+                            </label>
+                            <select class="float-right" id="delivery">
+                                <option class="text-muted">Standard-Delivery- RD&dollar;5.00</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="code">Oferta:</label> <input class="float-right" id="code" placeholder="Código">
+                        </div>
+                    </form>
+                    <div class="row border-top">
+                        <div class="col">Total</div>
+                        <div class="col text-right">RD$&#160;137.00</div>
+                    </div>
+                    <button class="btn text-white cyan float-right">Pasar a pagar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* Este flex-fill esta para mantener el footer en el fondo, creanme, es necesario */-->
+<div class="flex-fill"></div>
+<div th:replace="fragments/tienda_frag :: footer"></div>
+<th:block th:replace="fragments/tienda_frag :: coreScripts"></th:block>
+<!--/* scripts que quieran meter */-->
+<script>
+    function down(X) {
+        X.parentNode.parentNode.querySelector('input[type=number]').stepDown()
+    }
+
+    function up(X) {
+        X.parentNode.parentNode.querySelector('input[type=number]').stepUp()
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+    <div class="container">
+        <div class="row">
+            <div class="card">
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Control de Productos</h2>
+                </div>
+                <div class="card-body">
+                    <div class="producto collapse show" id="main">
+                        <form method="post"
+                              th:action="${agregar}?'/dashboard/controldeproductos/agregar/proccess':'/dashboard/controldeproductos/modificar/'+${producto.idProducto}+'/'"
+                              enctype="multipart/form-data">
+                            <input id="imgCambio" class="d-none" name="imgCambio" type="checkbox">
+                            <div class="row-cols-1">
+                                <div class="col d-none">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Id</label>
+                                        <input class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label>Imagen del producto: </label> <br>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="aspect1x1 border" style="background-color: lightgrey">
+                                                <div>
+                                                    <img id="contImg" class="imgContain d-none" src="">
+                                                    <th:block th:unless="${agregar}">
+                                                        <img id="eImg" class="imgContain" th:src="${producto.imageUrl}"
+                                                             th:if="${(producto.imageUrl != null)}">
+                                                        <img id="phImg" class="imgContain"
+                                                             th:classappend="${producto.imageUrl!=null}?'d-none':''"
+                                                             src="/svg/sin-seleccion.svg">
+                                                    </th:block>
+                                                    <img th:if="${agregar}" id="phImg" class="imgContain"
+                                                         src="/svg/sin-seleccion.svg">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div id="btnImgs" class="col-4 justify-content-center d-flex">
+                                            <th:block th:if="${agregar}">
+                                                <button onclick="clear_img()" id="clearImg"
+                                                        class="btn btn-danger btn-round btn-just-icon d-none"
+                                                        type="button">
+                                                    <i class="material-icons">clear</i>
+                                                </button>
+                                                <button id="modImg" class="btn btn-info btn-round" type="button"
+                                                        onclick="eligirImg()">
+                                                    Eligir
+                                                </button>
+                                            </th:block>
+                                            <th:block th:unless="${agregar}">
+                                                <button onclick="clear_img()" id="clearImg"
+                                                        class="btn btn-danger btn-round btn-just-icon"
+                                                        th:classappend="${producto.imageUrl!=null}?'':'d-none'"
+                                                        type="button"
+                                                        disabled>
+                                                    <i class="material-icons">clear</i>
+                                                </button>
+                                                <button th:if="${producto.imageUrl!=null}" id="cancelImg"
+                                                        class="btn btn-info btn-round d-none" type="button"
+                                                        onclick="cancelarImg()">
+                                                    Cancelar
+                                                </button>
+                                                <button id="modImg" class="btn btn-info btn-round" type="button"
+                                                        onclick="eligirImg()"
+                                                        th:text="${producto.imageUrl!=null}?'Modificar':'Eligir'"
+                                                        disabled>
+                                                </button>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                    <input id="imgData" class="d-none" type="file" name="image"
+                                           accept="image/png, image/jpeg"/>
+                                </div>
+                                <div class="col" th:unless="${agregar}">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">id</label>
+                                                <input class="form-control" type="text" readonly
+                                                       th:value="${producto.idProducto}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <!-- nombre y apellido -->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Nombre</label>
+                                                <input th:value="${agregar}?'':${producto.nombre}"
+                                                       th:readonly="${!agregar}" name="nombre"
+                                                       class="llenar form-control"
+                                                       type="text" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Cantidad</label>
+                                                <input th:value="${agregar}?'':${producto.cantidad}"
+                                                       th:readonly="${!agregar}" name="cantidad"
+                                                       class="llenar form-control"
+                                                       type="number" min="0"
+                                                       max="10000" step="1" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Mínimo</label>
+                                                <input th:value="${agregar}?'':${producto.cantidad_min}"
+                                                       th:readonly="${!agregar}" name="cantmin"
+                                                       class="llenar form-control"
+                                                       type="number" min="0"
+                                                       max="10000" step="1" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Forma como se dividia antes -->
+                                <!-- <div class="col">
+                                    <div class="row">                                        
+                                        <div class="form-group bmd-form-group col-md-4">
+                                            <label>Nombre</label>
+                                            <input name="nombre" class="form-control" type="text" required>
+                                        </div>
+                                        <div class="form-group bmd-form-group col-md-4">
+                                            <label>Cantidad</label>
+                                            <input name="cantidad" class="form-control" type="number" min="0" max="10000" step="1" value="5" required>
+                                        </div>
+                                        <div class="form-group bmd-form-group col-md-4">
+                                            <label>Mínimo</label>
+                                            <input name="cantmin" class="form-control" type="number" min="0" max="10000" step="1" value="0" required>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="col">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Costo</label>
+                                        <input th:value="${agregar}?'':${producto.costo}" th:readonly="${!agregar}"
+                                               name="precio" class="llenar form-control" type="number" min="0"
+                                               step="0.01"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Descripción corta</label>
+                                        <input th:value="${agregar}?'':${producto.descripcion_corta}"
+                                               th:readonly="${!agregar}" name="descripCorta" class="llenar form-control"
+                                               type="text" maxlength="127"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Descripción</label>
+                                        <textarea th:text="${agregar}?'':${producto.descripcion}"
+                                                  th:readonly="${!agregar}" name="desc" class="llenar form-control"
+                                                  id="exampleFormControlTextarea1"
+                                                  rows="4" maxlength="512"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <!--/*<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#eliminacion" th:unless="${agregar}">Eliminar
+                                        </button>*/-->
+                                        <div class="col"></div>
+                                        <div class="botones" th:unless="${agregar}">
+                                            <a href="/dashboard/controldeproductos" class="btn btn-info">Volver</a>
+                                            <button onclick="modificar()" type="button" class="btn btn-info">Modificar
+                                            </button>
+                                        </div>
+                                        <div class="botones" th:classappend="${!agregar}?'d-none':''">
+                                            <a th:href="${agregar}?'/dashboard/controldeproductos':'#'"
+                                               th:onclick="${agregar}?'':'cancelarMod();'"
+                                               class="btn btn-danger">Cancelar</a>
+                                            <button type="submit" class="btn btn-info">Aceptar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+    <div class="modal fade" id="eliminacion" tabindex="-1" role="" th:unless="${agregar}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">¿Deseas eliminar "[[${producto.nombre}]]"?</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>ID: [[${producto.idProducto}]]<br>
+                    Nombre: [[${producto.nombre}]]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-danger" th:href="'/dashboard/controldeproductos/eliminar/'+${producto.idProducto}+'/'">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var imgData;
+
+        $(document).ready(function () {
+            imgData = document.getElementById("imgData");
+        });
+
+        function eligirImg() {
+            $('#imgData').trigger('click');
+        }
+
+        function clear_img() {
+            $('#imgData').val("");
+            $("#modImg").text("Eligir");
+            $("#clearImg").addClass("d-none");
+            $("#contImg").addClass("d-none");
+            $("#phImg").removeClass("d-none");
+            $("#eImg").addClass("d-none");
+            $("#cancelImg").removeClass("d-none");
+            $("#imgCambio")[0].checked = true;
+        }
+
+        $('#imgData').on("input", function () {
+            if ($(this).val().length == 0) {
+                $("#modImg").text("Eligir");
+                $("#clearImg").addClass("d-none");
+                $("#contImg").addClass("d-none");
+                $("#phImg").removeClass("d-none");
+            } else {
+                $("#modImg").text("Modificar");
+                $("#clearImg").removeClass("d-none");
+                $('#contImg')[0].src = (window.URL ? URL : webkitURL).createObjectURL(imgData.files[0]);
+                $("#phImg").addClass("d-none");
+                $("#contImg").removeClass("d-none");
+            }
+            $("#imgCambio")[0].checked = true;
+            $("#cancelImg").removeClass("d-none");
+            $("#eImg").addClass("d-none");
+        });
+    </script>
+    <script th:unless="${agregar}">
+        $(document).ready(function () {
+            var get = location.search.replace('?', '').split('=');
+            if(get[0]=="error" && get[1]=="1")
+                alert("Hubo error en la eliminación del producto.");
+        });
+
+        function modificar() {
+            $(".llenar").each(function () {
+                this.readOnly = false;
+            });
+            $("#modImg")[0].disabled = false;
+            $("#clearImg")[0].disabled = false;
+            $(".botones").toggleClass('d-none');
+        }
+
+        function cancelarImg() {
+            $("#contImg").addClass("d-none");
+            $("#phImg").addClass("d-none");
+            $("#modImg").text("Modificar");
+            $("#clearImg").removeClass("d-none");
+            $("#cancelImg").addClass("d-none");
+            $("#eImg").removeClass("d-none");
+            $("#imgCambio")[0].checked = false;
+        }
+
+        function cancelarMod() {
+            $(".llenar").each(function () {
+                this.readOnly = true;
+                this.value = this.defaultValue;
+            });
+            $("#modImg")[0].disabled = true;
+            $("#clearImg")[0].disabled = true;
+            $(".botones").toggleClass('d-none');
+            if($("#eImg").length>0)
+                cancelarImg();
+            else {
+                clear_img();
+                $("#imgCambio")[0].checked = false;
+            }
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

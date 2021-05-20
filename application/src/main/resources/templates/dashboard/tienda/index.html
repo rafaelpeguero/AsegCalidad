@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<body>
+<!--Aquí va el contenido principal...-->
+<div class="content bg-light mt-0 p-0" th:fragment="contenido">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 px-0">
+                <div id="carouselPrincipal" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselPrincipal" data-slide-to="0" class="active"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="d-block w-100 bg-dark">
+                                <div class="aspect5x2">
+                                    <div>
+                                        <a href="/v/catalogo">
+                                            <img class="imgContain" src="/svg/no-imagen.svg" alt="First slide">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselPrincipal" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselPrincipal" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-header bg-info text-white card-title mb-0">
+                    <h2>Producto Destacados</h2>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3 col-md-6" th:each="producto: ${productos}">
+                <div class="row justify-content-center">
+                    <div class="card m-0 mt-4 m-xl-5 m-lg-3 m-md-3">
+                        <div class="card-img-top aspect1x1 border-bottom">
+                            <div>
+                                <a th:href="'/v/producto/'+${producto.idProducto}+'/'">
+                                    <img class="imgContain"
+                                         th:src="${producto.imageUrl != null}?${producto.imageUrl}:'/svg/no-imagen.svg'"
+                                         rel="nofollow" alt="Card image cap">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                <a th:href="'/v/producto/'+${producto.idProducto}+'/'">[[${producto.nombre}]]</a>
+                            </h3>
+                            <p class="card-text">Precio: RD$ [[${#numbers.formatDecimal(producto.costo, 0, 'COMMA', 2,
+                                'POINT')}]]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+
+</th:block>
+</body>
+
+</html>

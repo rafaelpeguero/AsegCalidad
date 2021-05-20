@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <th:block th:include="fragments/componentes :: head"></th:block>
+    <title>Mango SLR</title>
+</head>
+<body class="d-flex flex-column">
+
+<div th:replace="fragments/componentes :: header"></div>
+
+<div class="container">
+    esto es dique contenido
+</div>
+
+<!--/* Este flex-fill esta para mantener el footer en el fondo, creanme, es necesario */-->
+<div class="flex-fill"></div>
+<div th:replace="fragments/componentes :: footer"></div>
+<th:block th:replace="fragments/componentes :: coreScripts"></th:block>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="card">
+        <!--Titulo de la tarjeta-->
+        <div sec:authorize="hasAuthority('ROLE_CLIENTE')" class="card-header card-header-info">
+          <h2 class="card-title">Historial de compras</h2>
+        </div>
+        <div sec:authorize="hasAnyAuthority('ROLE_ADMINISTRADOR','ROLE_EMPLEADO','ROLE_VENDEDOR')"
+          class="card-header card-header-info">
+          <h2 class="card-title">Historial de ventas</h2>
+        </div>
+        <!--Cuerpo de la tarjeta-->
+        <div class="card-body table-responsive">
+          <div class="cambio collapse" id="carga">
+            <h1>Cargando...</h1>
+          </div>
+          <div class="cambio collapse show" id="contenido">
+            <form onsubmit="return buscarPedido();">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group bmd-form-group">
+                    <label class="bmd-label-floating">ID</label>
+                    <input id="idUsuario" name="idUsuario" class="form-control" type="text">
+                  </div>
+                </div>
+                <div class="col-12 col-md">
+                  <div class="form-group bmd-form-group">
+                    <label class="bmd-label-floating">Nombre del usuario</label>
+                    <input id="nombreUsuario" name="nombreUsuario" class="form-control" type="text">
+                  </div>
+                </div>
+                <div class="col d-md-none"></div>
+                <button type="submit" class="btn btn-info">Buscar</button>
+                <div class="col-12 d-md-none"></div>
+                <div class="col d-md-none"></div>
+
+              </div>
+            </form>
+          </div>
+          <div id="tab">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID Usuario</th>
+                  <th>Nombre del usuario</th>
+                  <th class="text-center">Factura</th>
+                  <th class="text-center">Fecha</th>
+                  <th class="text-center">Total</th>
+                  <th class="text-center">Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tData">
+                <tr>
+                  <td></td>
+                  <!--ID-->
+                  <td></td>
+                  <!--Nombre del usuario-->
+                  <td></td>
+                  <!--Factura-->
+                  <td></td>
+                  <!--Fecha-->
+                  <td></td>
+                  <!--Total-->
+                  <td></td>
+                  <!--Estado-->
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="justify-content-center d-flex">
+            <nav>
+              <ul class="pagination" id="navPage">
+                <li class="page-item border">
+                  <a onclick="setPage(1);"><i class="fa fa-angle-double-left page-link"></i></a>
+                </li>
+                <li class="page-item border">
+                  <a onclick="setPage(currentPage-1);"><i class="fa fa-angle-left page-link"></i></a>
+                </li>
+                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link" href="#">1</a></li>
+                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link" href="#">2</a></li>
+                <li class="page-item border active"><a class="page-link" href="#">3</a></li>
+                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link" href="#">4</a></li>
+                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link" href="#">5</a></li>
+                <li class="page-item border">
+                  <a onclick="setPage(currentPage+1);"><i class="fa fa-angle-right page-link"></i></a>
+                </li>
+                <li class="page-item border">
+                  <a onclick="setPage(maxPage);"><i class="fa fa-angle-double-right page-link"></i></a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <button sec:authorize="hasAnyAuthority('ROLE_ADMINISTRADOR', 'ROLE_EMPLEADO', 'ROLE_CLIENTE')" onclick="return imprimirPDF();" class="btn btn-info pull-right">Imprimir contenido</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--Fin de contenido principal...-->
+<th:block th:fragment="pageScripts">
+  <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var maxPage = 20;
+    var cantShow = 10;
+    var currentPage;
+    var navPage = [];
+    var currId = "";
+    var currName = "";
+    var tableBody;
+    var sample;
+    var disponible = true;
+
+    function cambiar() {
+      if (disponible) {
+        document.getElementById("carga").classList.add("show");
+        document.getElementById("contenido").classList.remove("show");
+      } else {
+        document.getElementById("carga").classList.remove("show");
+        document.getElementById("contenido").classList.add("show");
+      }
+      disponible = !disponible;
+    }
+
+    function getIdValue(node) {
+      return node.parentNode.parentNode.children[0].innerText;
+    }
+
+    function eliminar(node) {
+      let idDelete = getIdValue(node);
+    }
+
+    function modificar(node) {
+      let idMod = getIdValue(node);
+    }
+
+    function setPage(page) {
+      page = Number(page);
+      if (page == currentPage)
+        return;
+      if (page < 1 || page > maxPage)
+        return;
+      let datos = {
+        id: currId,
+        nombre: currName,
+        pagina: page - 1,
+        mostrar: cantShow
+      };
+      var modal = $('#errorModal');
+      if (disponible)
+        cambiar();
+      $.post(
+        "/api/historial/historialProductos",
+        datos,
+        function (data) {
+          currentPage = page;
+          let temp;
+          for (let i = 0; i < navPage.length; i++) {
+            temp = currentPage + i - 2;
+            navPage[i].firstChild.innerText = temp;
+            if (temp < 1 || temp > maxPage)
+              navPage[i].classList.add("d-none");
+            else
+              navPage[i].classList.remove("d-none");
+          }
+          tableBody.innerHTML = '';
+          // Escribir los datos...
+          for (let i = 0; i < data.length; i++) {
+            sample.children[0].innerText = data[i].idUsuario;
+            sample.children[1].innerText = data[i].nombreUsuario;
+            sample.children[2].innerText = data[i].idFactura;
+            sample.children[3].innerText = data[i].fecha.split(" ")[0];
+            sample.children[4].innerText = data[i].total;
+            if (data[i].enCurso) {
+              sample.children[5].innerText = "No entregado.";
+            } else {
+              sample.children[5].innerText = "Entregado.";
+            }
+            tableBody.appendChild(sample.cloneNode(true));
+          }
+        }
+      ).fail(function () {
+        modal.find('.modal-body p').text('La página no cargo.');
+        modal.find('.modal-header h5').html('Error');
+        $('#errorModal').modal('show');
+      }).always(function () {
+        cambiar();
+      });
+    }
+
+    function buscarPedido() {
+      if (disponible)
+        cambiar();
+      currId = $("#idUsuario").val();
+      currName = $("#nombreUsuario").val();
+      var modal = $('#errorModal');
+      let datos = {
+        id: currId,
+        nombre: currName
+      };
+      $.post(
+        "/api/historial/contarProductos",
+        datos,
+        function (data) {
+          maxPage = Math.floor(data / cantShow) + 1;
+          currentPage = -1;
+          setPage(1);
+        }
+      ).fail(function () {
+        modal.find('.modal-body p').text('La página no cargo.');
+        modal.find('.modal-header h5').html('Error');
+        $('#errorModal').modal('show');
+        cambiar();
+      });
+      return false;
+    }
+
+    function imprimirPDF() {
+      var sTable = document.getElementById('tab').innerHTML;
+
+      var style = "<style>";
+      style = style + "table {width: 100%;font: 17px Calibri;}";
+      style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+      style = style + "padding: 2px 3px;text-align: center;}";
+      style = style + "</style>";
+
+      // CREATE A WINDOW OBJECT.
+      var win = window.open('', '', 'height=700,width=700');
+
+      win.document.write('<html><head>');
+      win.document.write('<title>Historial</title>');   // <title> FOR PDF HEADER.
+      win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+      win.document.write('</head>');
+      win.document.write('<body>');
+      win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+      win.document.write('</body></html>');
+
+      win.document.close(); 	// CLOSE THE CURRENT WINDOW.
+
+      win.print();    // PRINT THE CONTENTS.
+    }
+
+    $(document).ready(function () {
+      tableBody = document.getElementById("tData");
+      sample = tableBody.children[0].cloneNode(true);
+      contenido = document.getElementById("contenido");
+      var targetPaging = document.getElementById("navPage");
+      for (let i = 2; i < 7; i++) {
+        navPage.push(targetPaging.children[i]);
+      }
+      buscarPedido();
+    });
+  </script>
+</th:block>
+
+
+</body>
+
+</html>

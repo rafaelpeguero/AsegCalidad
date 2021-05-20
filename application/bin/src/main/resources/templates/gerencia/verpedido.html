@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <th:block th:include="fragments/componentes :: head"></th:block>
+    <title>Pedido #[[${id}]]</title>
+    <style>
+        input[type="checkbox"] {
+            transform: scale(2, 2);
+        }
+    </style>
+</head>
+<body>
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark color-primario">
+        <a class="navbar-brand" href="#"><h1>Perdido</h1></a>
+    </nav>
+    <nav class="navbar navbar-expand-lg navbar-dark grey">
+        <div class="text-light">Pedido #[[${id}]]</div>
+    </nav>
+</header>
+
+
+<table class="container table border table-striped" id="data">
+    <thead class="thead-light">
+    <tr>
+        <th scope="col">-</th>
+        <th scope="col">Id</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripción</th>
+        <th scope="col">Cantidad</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td><input class="form-check-inline" type="checkbox" value=""></td>
+        <th scope="row">1</th>
+        <td>Producto</td>
+        <td>Tal cosa</td>
+        <td>3</td>
+    </tr>
+    </tbody>
+</table>
+
+<footer class="fixed-bottom container-fluid white border">
+    <div class="container">
+        <div class="row">
+            <div class="col mt-auto mb-auto">
+                <h4>Productos preparados: 0/18</h4>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-orange btn-outline-black disabled float-right">Siguiente Paso</button>
+                <button type="submit" class="btn btn-red text-light float-right">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</footer>
+<th:block th:replace="fragments/componentes :: coreScripts"></th:block>
+<script>
+    $("#data").css('margin-bottom', $("footer").height());
+</script>
+</body>
+</html>

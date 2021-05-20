@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<body>
+<!--Aquí va el contenido principal...-->
+<div class="content px-0 px-md-3 mt-2" th:fragment="contenido">
+    <div class="container-fluid px-0 px-md-3">
+        <div class="row w-100 mx-0">
+            <div class="col px-0">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h2 class="card-title">[[${producto.nombre}]]</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                <div class="aspect1x1 shadow">
+                                    <div>
+                                        <img class="imgContain"
+                                             th:src="${producto.imageUrl != null}?${producto.imageUrl}:'/svg/no-imagen.svg'">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <div class="row">
+                                    <div class="col-12 col-xl-8 col-lg-6"><h5 class="mb-0 mt-3">Precio: RD$
+                                        [[${#numbers.formatDecimal(producto.costo, 0, 'COMMA', 2, 'POINT')}]]</h5>
+                                    </div>
+                                    <div class="col-11 col-xl-4 col-lg-6 col-sm-6">
+                                        <form class="justify-content-end" action="/v/carrito/agregar" method="post">
+                                            <input name="id" type="number" class="d-none"
+                                                   th:value="${producto.idProducto}"/>
+                                            <div class="input-group">
+                                                <input name="cantidad" type="number" class="form-control" step="1"
+                                                       min="1" value="1"/>
+                                                <button class="btn btn-info" type="submit">Añadir</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="d-md-none col-1 d-sm-flex col-sm-6"></div>
+                                    <div class="col-12 border-bottom"><h5 class="mb-0 mt-3 font-weight-bold">
+                                        Descripción</h5></div>
+                                    <div class="col-12"><p>[[${producto.descripcion}]]</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+
+</th:block>
+</body>
+
+</html>

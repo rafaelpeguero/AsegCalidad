@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+    <div class="container">
+        <div class="row">
+            <div class="card">
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">[[${tituloAgregar}]]</h2>
+                </div>
+                <div class="card-body">
+                    <div class="usuario collapse show" id="main">
+                        <form id="myForm" method="post"
+                            th:action="${agregar}?'':'/dashboard/controldeusuarios/modificar/'+${usuario.idUsuario}+'/'"
+                            th:onsubmit="${agregar}? 'return agregarUsuario();' : ''">
+                            <div class="row-cols-1">
+                                <div class="col d-none">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Id</label>
+                                        <input class="form-control" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <!-- nombre y apellido -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Nombre</label>
+                                                <input th:value="${agregar}? '' : ${usuario.persona.nombre}"
+                                                    th:readonly="${!agregar}" id="name" name="name" type="text"
+                                                    class="llenar form-control" minlength="3" maxlength="29" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Apellido</label>
+                                                <input th:value="${agregar}?'':${usuario.persona.apellido}"
+                                                    th:readonly="${!agregar}" id="lastname" name="lastname"
+                                                    class="llenar form-control" type="text" minlength="3" maxlength="29"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <!-- fecha de nacimiento y direccion -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"></label>
+                                                <input th:readonly="${!agregar}" id="dateofbirth" name="dateofbirth"
+                                                    type="date" class="llenar form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Dirección</label>
+                                                <input th:value="${agregar}?'':${usuario.persona.direccion}"
+                                                    th:readonly="${!agregar}" id="address" name="address"
+                                                    class="llenar form-control" type="text" minlength="10"
+                                                    maxlength="512">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <!-- sexo y tipo de sangre -->
+                                        <div class="form-group bmd-form-group col-md-6">
+                                            <label>Sexo</label>
+                                            <select name="gender" id="gender" class="llenarSelect form-control">
+                                                <option value="F">Femenino</option>
+                                                <option value="M">Másculino</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group bmd-form-group col-md-6">
+                                            <label>Tipo de sangre</label>
+                                            <select name="blood" id="blood" class="llenarSelect form-control">
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Teléfono</label>
+                                                <input th:value="${agregar}?'':${usuario.persona.telefono}"
+                                                    th:readonly="${!agregar}" id="phone" type="text" name="phone"
+                                                    class="llenar form-control" minlength="10" maxlength="19">
+                                                <!-- Intentando implementar máscara, se canceló porque puede haber otros tipos de números de teléfono -->
+                                                <!-- <input id="phone" name="phone" type="text"  class="phone_number form-control" value="9876543210"> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Cédula</label>
+                                                <input th:value="${agregar}?'':${usuario.persona.cedula}"
+                                                    th:readonly="${!agregar}" id="identity" type="text" name="identity"
+                                                    class="llenar form-control" minlength="11" maxlength="14" required>
+                                                <!-- <input id="cellphone" name="cellphone" class="phone_number_2 form-control" type="text" value="9876543210"> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Nombre de usuario</label>
+                                                <input th:value="${agregar}?'':${usuario.nombreUsuario}"
+                                                    th:readonly="${!agregar}" id="username" type="text" name="username"
+                                                    class="form-control" minlength="8" maxlength="19" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Clave</label>
+                                                <input th:value="${agregar}?'':''" th:readonly="${!agregar}"
+                                                    id="password" type="text" name="password"
+                                                    class="llenar form-control" minlength="8" maxlength="19" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Tipo de usuario</label>
+                                        <select name="userType" id="userType" class="llenarSelect form-control"
+                                            required>
+                                            <option value="Cliente">Cliente</option>
+                                            <option value="Empleado">Empleado</option>
+                                            <option value="Vendedor">Vendedor</option>
+                                            <option value="Administrador">Administrador</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Correo electrónico</label>
+                                        <input th:value="${agregar}?'':${usuario.correo}" th:readonly="${!agregar}"
+                                            id="email" name="email" class="llenar form-control" type="text"
+                                            minlength="8" maxlength="149" required>
+                                    </div>
+                                </div>
+                                <!-- ejemplo de un campo richtext -->
+                                <!-- <div class="col">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Descripción</label>
+                                        <textarea name="desc" class="form-control" id="exampleFormControlTextarea1" rows="4" maxlength="512"></textarea>
+                                    </div>
+                                </div> -->
+                                <br>
+                                <!-- <div class="col">
+                                    Para subir la imagen: 
+                                    <label>Imagen del perfil de usuario: </label> <br>
+                                    <input type="file" name="image" accept="image/png, image/jpeg"/>
+                                </div> -->
+                                <div class="col">
+
+                                    <div class="row">
+                                        <div class="col"></div>
+                                        <div class="botones" th:unless="${agregar}">
+                                            <a href="/dashboard/controldeusuarios" class="btn btn-info">Volver</a>
+                                            <button onclick="modificar()" type="button" class="btn btn-info">Modificar
+                                            </button>
+                                        </div>
+                                        <div class="botones" th:classappend="${!agregar}?'d-none':''">
+                                            <a th:href="${agregar}?'/dashboard/controldeusuarios':'#'"
+                                                th:onclick="${agregar}?'':'cancelarMod();'"
+                                                class="btn btn-danger">Cancelar</a>
+                                            <button type="submit" class="btn btn-info">Aceptar</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:if="${agregar}">
+
+        function agregarUsuario() {
+            // Persona
+            var nombre = String($('#name').val());
+            var apellido = String($('#lastname').val());
+            var cedula = String($('#identity').val());
+            var fechaNacimiento = String($('#dateofbirth').val());
+            var direccion = String($('#address').val());
+            var sexo = String($('#gender').val());
+            var sangre = String($('#blood').val());
+            var telefono = String($('#phone').val());
+            // Usuario
+            var username = String($('#username').val());
+            var pass1 = String($('#password').val());
+            var tipoUsuario = String($('#userType').val());
+            var email = String($('#email').val());
+
+            let datos = {
+                // Persona
+                nombre: nombre,
+                apellido: apellido,
+                sexo: sexo,
+                tipoSangre: sangre,
+                fechaNacimiento: fechaNacimiento,
+                direccion: direccion,
+                telefono: telefono,
+                cedula: cedula,
+
+                // Usuario
+                nombreUsuario: username,
+                clave: pass1,
+                tipoUsuario: tipoUsuario,
+                email: email
+            };
+            var modal = $('#errorModal');
+            $.post(
+                "/api/controldeusuarios/agregar",
+                datos,
+                function (data) {
+                    switch (data) {
+                        case 1:
+                            //console.log('Usuario agregado correctamente.');
+                            modal.find('.modal-body p').text('Usuario agregado correctamente.');
+                            modal.find('.modal-header h5').html('Información');
+                            document.getElementById("myForm").reset();
+                            break;
+                        case 2:
+                            //console.log('Esta cédula ya existe.');
+                            modal.find('.modal-body p').text('Esta cédula ya existe.');
+                            modal.find('.modal-header h5').html('Advertencia');
+                            break;
+                        case 3:
+                            //console.log('Este correo ya existe.');
+                            modal.find('.modal-body p').text('Este correo ya existe.');
+                            modal.find('.modal-header h5').html('Advertencia');
+                            break;
+                        case 4:
+                            //console.log('Este nombre de usuario ya existe.');
+                            modal.find('.modal-body p').text('Este nombre de usuario ya existe.');
+                            modal.find('.modal-header h5').html('Advertencia');
+                            break;
+
+                        case 5:
+                            //console.log('Falta un campo importante.');
+                            modal.find('.modal-body p').text('Falta un campo importante.');
+                            modal.find('.modal-header h5').html('Advertencia');
+                            break;
+
+                        default:
+                            //console.log('No se pudo agregar el usuario.');
+                            modal.find('.modal-body p').text('No se pudo agregar el usuario.');
+                            modal.find('.modal-header h5').html('Error');
+                            break;
+                    }
+                    $('#errorModal').modal('show');
+                }
+            ).fail(function () {
+                modal.find('.modal-body p').text('El usuario no se pudo añadir...');
+                modal.find('.modal-header h5').html('Error');
+                $('#errorModal').modal('show');
+            });
+            return false;
+        };
+
+        // $(document).ready(function () {
+        //     var form = document.getElementById("myForm");
+        //     form.attr("onsubmit", "return validarUsuario()");
+        //     }
+        // );
+
+    </script>
+
+    <script th:unless="${agregar}">
+        function subir() {
+
+        }
+
+        function modificar() {
+            $(".llenar").each(function () {
+                this.readOnly = false;
+            });
+            $(".llenarSelect").each(function () {
+                this.disabled = false;
+            });
+            $(".botones").toggleClass('d-none');
+            //cargarSelect();
+        }
+
+        function cancelarMod() {
+            $(".llenar").each(function () {
+                this.readOnly = true;
+                this.value = this.defaultValue;
+            });
+            $(".llenarSelect").each(function () {
+                this.disabled = true;
+            });
+            $(".botones").toggleClass('d-none');
+        }
+
+        function cargarSelect() {
+            // Desactivar
+            var sexo = "[[${usuario.persona.sexo}]]";
+            var tipoSangre = "[[${usuario.persona.tipoSangre}]]";
+            var tipoUsuario = "[[${usuario.tipoUsuario}]]";
+            //console.log(sexo + " " + tipoSangre + " " + tipoUsuario);
+
+            var selectSexo = document.querySelector('#gender');
+            var selectSangre = document.querySelector('#blood');
+            var selectUsuario = document.querySelector('#userType');
+
+            selectSexo.value = sexo;
+            selectSangre.value = tipoSangre;
+            selectUsuario.value = tipoUsuario;
+
+            // Fecha de nacimiento
+            var fecha = "[[${usuario.persona.fechaNacimiento}]]".split(" ")[0];
+            $("#dateofbirth").val(fecha);
+        }
+
+        $(document).ready(function () {
+            cargarSelect();
+            $('#gender').prop('disabled', 'disabled');
+            $('#blood').prop('disabled', 'disabled');
+            $('#userType').prop('disabled', 'disabled');
+        });
+    </script>
+
+
+</th:block>
+</body>
+
+</html>

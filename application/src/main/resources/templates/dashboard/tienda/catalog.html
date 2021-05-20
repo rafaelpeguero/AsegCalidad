@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<body>
+<!--Aquí va el contenido principal...-->
+<div class="content mt-0 p-0" th:fragment="contenido">
+    <div class="container-fluid">
+        <div class="row mb-4 pt-md-4 px-md-3">
+            <div class="col-12 col-lg-3 col-md-6" th:each="producto: ${productos}">
+                <div class="row justify-content-center">
+                    <div class="card m-0 mt-4 m-xl-5 m-lg-3 m-md-3">
+                        <div class="card-img-top aspect1x1 border-bottom">
+                            <div>
+                                <a th:href="'/v/producto/'+${producto.idProducto}+'/'">
+                                <img class="imgContain"
+                                     th:src="${producto.imageUrl != null}?${producto.imageUrl}:'/svg/no-imagen.svg'"
+                                     rel="nofollow" alt="Card image cap">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                <a th:href="'/v/producto/'+${producto.idProducto}+'/'">[[${producto.nombre}]]</a>
+                            </h3>
+                            <p class="card-text">Precio: RD$ [[${#numbers.formatDecimal(producto.costo, 0, 'COMMA', 2,
+                                'POINT')}]]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row px-3 d-flex justify-content-center justify-content-md-start">
+            <nav>
+                <ul class="pagination bg-white" id="navPage">
+                    <li class="page-item border">
+                        <a th:href="${cpage>1}?'.?'+${getParam}+'&p=1':'#'"><i
+                                class="fa fa-angle-double-left page-link"></i></a>
+                    </li>
+                    <li class="page-item border">
+                        <a th:href="${cpage>1}?'.?'+${getParam}+'&p='+${cpage-1}:'#'"><i
+                                class="fa fa-angle-left page-link"></i></a>
+                    </li>
+                    <!--/*Comienzo*/-->
+                    <th:block th:if="${cpage}>2">
+                        <li th:each="i: ${#numbers.sequence(pages[0], cpage-2)}"
+                            class="page-item border d-none d-md-flex"><a class="page-link"
+                                                                         th:href="'/v/catalogo?'+${getParam}+'&p='+${i}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                    <li th:if="${cpage}-1>0" class="page-item border"><a class="page-link"
+                                                                         th:href="'/v/catalogo?'+${getParam}+'&p='+${cpage - 1}">[[${cpage}-1]]</a>
+                    </li>
+                    <li class="page-item border active"><a class="page-link" href="#">[[${cpage}]]</a></li>
+                    <li th:if="${maxPage-cpage}>0" class="page-item border"><a class="page-link"
+                                                                               th:href="'/v/catalogo?'+${getParam}+'&p='+${cpage+1}">[[${cpage}+1]]</a>
+                    </li>
+                    <th:block th:if="${maxPage-cpage}>1">
+                        <li th:each="i: ${#numbers.sequence(cpage+2, pages[1])}"
+                            class="page-item border  d-none d-md-flex"><a class="page-link"
+                                                                          th:href="'/v/catalogo?'+${getParam}+'&p='+${i}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                    <!--/*fin*/-->
+                    <li class="page-item border">
+                        <a th:href="${cpage<maxPage}?'/v/catalogo?'+${getParam}+'&p='+${cpage+1}:'#'"><i
+                                class="fa fa-angle-right page-link"></i></a>
+                    </li>
+                    <li class="page-item border">
+                        <a th:href="${cpage<maxPage}?'/v/catalogo?'+${getParam}+'&p='+${maxPage}:'#'"><i
+                                class="fa fa-angle-double-right page-link"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+
+</th:block>
+</body>
+
+</html>

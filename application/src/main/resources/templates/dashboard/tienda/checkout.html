@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<body>
+<!--Aquí va el contenido principal...-->
+<div class="content mt-0 p-0" th:fragment="contenido">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title">Revisión</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="text-right">Precio</th>
+                                        <th class="text-right">Cantidad</th>
+                                        <th class="text-right">Monto</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="item, iStat:${carrito}" th:id="'item'+${item.key.idProducto}">
+                                        <td>[[${item.key.idProducto}]]</td>
+                                        <td>[[${item.key.nombre}]]</td>
+                                        <td class="text-right">RD$ [[${#numbers.formatDecimal(item.key.costo, 0, 'COMMA', 2,'POINT')}]]</td>
+                                        <td class="text-right">[[${item.value}]]</td>
+                                        <td class="text-right">RD$ [[${#numbers.formatDecimal(item.key.costo * item.value, 0, 'COMMA', 2,'POINT')}]]</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="text-right">Total:</th>
+                                        <th class="text-right">RD$ [[${#numbers.formatDecimal(total, 0, 'COMMA', 2,'POINT')}]]</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="col-12">
+                                <div class="float-right">
+                                    <a id="checkout" href="/v/carrito" class="btn btn-danger" th:classappend="${#maps.size(carrito)==0}?'disabled':''">
+                                        Cancelar
+                                    </a>
+                                    <a id="checkout" href="/v/carrito" class="btn btn-info" th:classappend="${#maps.size(carrito)==0}?'disabled':''">
+                                        Proceder
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+
+</th:block>
+</body>
+
+</html>

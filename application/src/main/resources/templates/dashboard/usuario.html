@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-info">
+              <h4 class="card-title">Perfil de usuario</h4>
+              <p class="card-category">Completa tu información</p>
+            </div>
+            <div class="card-body">
+              <form id="myForm" method="post" onsubmit="return actualizarPerfil();">
+                <!--Compañía y usuario-->
+                <div class="row">
+                  <!-- <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Company - Mango SLR</label>
+                      <input id="company" name="company" type="text" class="form-control" disabled>
+                    </div>
+                  </div> -->
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Nombre de usuario</label>
+                      <input th:value="${usuario != null}? ${usuario.nombreUsuario}:''" id="username" name="username"
+                        type="text" class="form-control" disabled>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label th:value="${usuario != null}? ${usuario.correo}:''"
+                        class="bmd-label-floating">Correo</label>
+                      <input id="correoelec" name="correoelec" type="email" class="form-control" disabled>
+                    </div>
+                  </div>
+                </div>
+                <!--Nombre y apellido-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Nombre</label>
+                      <input th:value="${usuario != null}? ${usuario.persona.nombre}:''" id="nombrePersona"
+                        name="nombrePersona" type="text" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Apellido</label>
+                      <input th:value="${usuario != null}? ${usuario.persona.apellido}:''" id="lastname" name="lastname"
+                        type="text" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <!--Fecha de nacimiento y direccion-->
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating"></label>
+                      <input id="dateofbirth" name="dateofbirth" type="date" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Dirección</label>
+                      <input th:value="${usuario != null}? ${usuario.persona.direccion}:''" id="address" name="address"
+                        type="text" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <!--Sexo, sangre y teléfono.-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Sexo</label>
+                      <select name="gender" id="gender" class="llenarSelect form-control">
+                        <option value="F">Femenino</option>
+                        <option value="M">Másculino</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Tipo de sangre</label>
+                      <select name="blood" id="blood" class="llenarSelect form-control">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <!--Teléfono, cédula, cambiar contraseña-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Teléfono</label>
+                      <input th:value="${usuario != null}? ${usuario.persona.telefono}:''" name="phone" id="phone"
+                        type="text" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Cédula</label>
+                      <input th:value="${usuario != null}? ${usuario.persona.cedula}:''" name="identity" id="identity"
+                        type="text" class="form-control" disabled>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col"></div>
+                  <button type="submit" class="btn btn-info pull-right">Actualizar Perfil</button>
+                </div>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!--Información del usuario-->
+        <div class="col-md-4">
+          <div class="card card-profile">
+            <div sec:authorize="hasAuthority('ROLE_ADMINISTRADOR')" class="card-avatar">
+              <a href="javascript:;">
+                <img class="img" src="/img/team/officer.png" />
+              </a>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_CLIENTE')" class="card-avatar">
+              <a href="javascript:;">
+                <img class="img" src="/img/user.png" />
+              </a>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_EMPLEADO')" class="card-avatar">
+              <a href="javascript:;">
+                <img class="img" src="/img/team/employee.png" />
+              </a>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_VENDEDOR')" class="card-avatar">
+              <a href="javascript:;">
+                <img class="img" src="/img/team/profile.png" />
+              </a>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_ADMINISTRADOR')" class="card-body">
+              <h6 class="card-category text-gray">Administrador</h6>
+              <h4 class="card-title">Lorem ipsum</h4>
+              <p class="card-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus adipisci assumenda blanditiis
+                commodi consequuntur dolore eligendi eveniet explicabo ipsa laboriosam molestiae neque nesciunt nihil
+                nisi odit reiciendis, repellendus sunt velit?
+              </p>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_CLIENTE')" class="card-body">
+              <h6 class="card-category text-gray">Cliente</h6>
+              <h4 class="card-title">Lorem ipsum</h4>
+              <p class="card-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus adipisci assumenda blanditiis
+                commodi consequuntur dolore eligendi eveniet explicabo ipsa laboriosam molestiae neque nesciunt nihil
+                nisi odit reiciendis, repellendus sunt velit?
+              </p>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_EMPLEADO')" class="card-body">
+              <h6 class="card-category text-gray">Empleado</h6>
+              <h4 class="card-title">Lorem ipsum</h4>
+              <p class="card-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus adipisci assumenda blanditiis
+                commodi consequuntur dolore eligendi eveniet explicabo ipsa laboriosam molestiae neque nesciunt nihil
+                nisi odit reiciendis, repellendus sunt velit?
+              </p>
+            </div>
+            <div sec:authorize="hasAuthority('ROLE_VENDEDOR')" class="card-body">
+              <h6 class="card-category text-gray">Vendedor</h6>
+              <h4 class="card-title">Lorem ipsum</h4>
+              <p class="card-description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus adipisci assumenda blanditiis
+                commodi consequuntur dolore eligendi eveniet explicabo ipsa laboriosam molestiae neque nesciunt nihil
+                nisi odit reiciendis, repellendus sunt velit?
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Password-->
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-info">
+              <h4 class="card-title">Contraseña</h4>
+              <p class="card-category">Cambio de contraseña.</p>
+            </div>
+            <div class="card-body">
+              <form id="claveForm" method="post" onsubmit="return actualizarClave();">
+                <!--Clave vieja y nueva-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Actual</label>
+                      <input minlength="8" maxlength="19" id="old_pass" name="old_pass" type="password"
+                        class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Nueva</label>
+                      <input minlength="8" maxlength="19" id="new_pass" name="new_pass" type="password"
+                        class="form-control">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col"></div>
+                  <button type="submit" class="btn btn-info pull-right">Cambiar</button>
+                </div>
+
+                <div class="clearfix"></div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+  <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    function actualizarPerfil() {
+      //alert('hola');
+      //console.log('Mandando...');
+      // Persona
+      var nombre = String($('#nombrePersona').val());
+      var apellido = String($('#lastname').val());
+      var cedula = String($('#identity').val());
+      var fechaNacimiento = String($('#dateofbirth').val());
+      var direccion = String($('#address').val());
+      var sexo = String($('#gender').val());
+      var sangre = String($('#blood').val());
+      var telefono = String($('#phone').val());
+      // Usuario
+      var nombreUser = String($('#username').val());
+      var tipoUsuario = "Default";
+      var email = String($('#correoelec').val());
+
+      let datos = {
+        // Persona
+        nombre: nombre,
+        apellido: apellido,
+        sexo: sexo,
+        tipoSangre: sangre,
+        fechaNacimiento: fechaNacimiento,
+        direccion: direccion,
+        telefono: telefono,
+        cedula: cedula,
+        // Usuario
+        nombreUsuario: nombreUser,
+        clave: "",
+        tipoUsuario: tipoUsuario,
+        email: email
+      };
+      //console.log('Antes de mandar mensaje al api...');
+      var modal = $('#errorModal');
+      $.post(
+        "/api/controldeusuarios/modificarPerfil",
+        datos,
+        function (data) {
+          switch (data) {
+            case 1:
+              modal.find('.modal-body p').text('Se ha actualizado su perfil.');
+              modal.find('.modal-header h5').html('Información');
+              break;
+            case 2:
+              modal.find('.modal-body p').text('Usuario no encontrado.');
+              modal.find('.modal-header h5').html('Error');
+              break;
+            case 3:
+              modal.find('.modal-body p').text('No está en sesión.');
+              modal.find('.modal-header h5').html('Error');
+              break;
+
+            default:
+              modal.find('.modal-body p').text('Ha ocurrido un error al actualizar perfil.');
+              modal.find('.modal-header h5').html('Error');
+              break;
+          }
+          $('#errorModal').modal('show');
+          //console.log('Ok');
+        }
+      ).fail(function () {
+        //alert('Error');
+        modal.find('.modal-body p').text('No se pudo actualizar...');
+        modal.find('.modal-header h5').html('Error');
+        $('#errorModal').modal('show');
+      });
+      return false;
+    }
+
+    function actualizarClave() {
+      var vieja = String($('#old_pass').val());
+      var nueva = String($('#new_pass').val());
+
+      let info = {
+        clave: vieja,
+        newclave: nueva
+      };
+      //console.log('Antes de enviar');
+
+      //console.log(info);
+      var modal = $('#errorModal');
+      $.post(
+        "/api/controldeusuarios/cambiarClave",
+        info,
+        function (reply) {
+          switch (reply) {
+            case 1:
+              //console.log('Clave cambiada exitosamente.');
+              modal.find('.modal-body p').text('Clave cambiada exitosamente.');
+              modal.find('.modal-header h5').html('Información');
+              document.getElementById("claveForm").reset();
+              break;
+
+            case 2:
+              //console.log('Las claves deben ser diferentes.');
+              modal.find('.modal-body p').text('Las claves deben ser diferentes.');
+              modal.find('.modal-header h5').html('Error');
+              break;
+
+            case 3:
+              //console.log('La clave anterior no es la correcta.');
+              modal.find('.modal-body p').text('La clave anterior no es la correcta.');
+              modal.find('.modal-header h5').html('Error');
+              break;
+
+            default:
+              //console.log('No fue posible cambiar la contraseña.');
+              modal.find('.modal-body p').text('No fue posible cambiar la contraseña.');
+              modal.find('.modal-header h5').html('Error');
+              break;
+          }
+          $('#errorModal').modal('show');
+        }
+      ).fail(function () {
+        //console.log('No se pudo cambiar la contraseña...');
+        modal.find('.modal-body p').text('No se pudo cambiar la contraseña...');
+        modal.find('.modal-header h5').html('Error');
+        $('#errorModal').modal('show');
+      });
+      return false;
+    }
+
+    function cargarSelect() {
+      if ("[[${usuario}]]" != null) {
+        // Desactivar
+        var sexo = "[[${usuario.persona.sexo}]]";
+        var tipoSangre = "[[${usuario.persona.tipoSangre}]]";
+        //console.log(sexo + " " + tipoSangre + " ");
+
+        var selectSexo = document.querySelector('#gender');
+        var selectSangre = document.querySelector('#blood');
+
+        selectSexo.value = sexo;
+        selectSangre.value = tipoSangre;
+
+        // Fecha de nacimiento
+        var fecha = "[[${usuario.persona.fechaNacimiento}]]".split(" ")[0];
+        $("#dateofbirth").val(fecha);
+      }
+    }
+
+    $(document).ready(function () {
+      cargarSelect();
+    });
+  </script>
+</th:block>
+</body>
+
+</html>

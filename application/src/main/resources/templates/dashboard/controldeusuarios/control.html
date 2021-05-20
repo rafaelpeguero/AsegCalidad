@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Control de Usuarios</h2>
+                </div>
+                <div class="card-body table-responsive">
+                    <div class="cambio collapse" id="carga">
+                        <h1>Cargando...</h1>
+                    </div>
+                    <div class="cambio collapse show" id="contenido">
+                        <form onsubmit="return buscarUsuario();">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Id</label>
+                                        <input id="idUsuario" class="form-control" type="number">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Nombre de usuario</label>
+                                        <input id="nombreUsuario" class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="col d-md-none"></div>
+                                <button type="submit" class="btn btn-info">Buscar</button>
+                                <div class="col-12 d-md-none"></div>
+                                <div class="col d-md-none"></div>
+                                <a href="/dashboard/controldeusuarios/agregar" class="btn btn-info">Añadir</a>
+                                <!-- <div class="col d-md-none"></div>
+                                <a href="/dashboard/controldeusuarios/modificar" class="btn btn-info">Modificar</a> -->
+                            </div>
+                        </form>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre de usuario</th>
+                            <th>Tipo Usuario</th>
+                            <th>Correo</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody id="tData">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="td-actions text-right">
+                                <a class="btn btn-info">
+                                    Ver <span class="material-icons">visibility</span>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="justify-content-center d-flex">
+                        <nav>
+                            <ul class="pagination" id="navPage">
+                                <li class="page-item border">
+                                    <a onclick="setPage(1);"><i class="fa fa-angle-double-left page-link"></i></a>
+                                </li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(currentPage-1);"><i class="fa fa-angle-left page-link"></i></a>
+                                </li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                                                href="#">1</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                                                href="#">2</a></li>
+                                <li class="page-item border active"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                                                href="#">4</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                                                href="#">5</a></li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(currentPage+1);"><i class="fa fa-angle-right page-link"></i></a>
+                                </li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(maxPage);"><i
+                                            class="fa fa-angle-double-right page-link"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+</body>
+
+<th:block th:fragment="pageScripts">
+    <script>
+        var maxPage = 20;
+        var cantShow = 10;
+        var currentPage;
+        var navPage = [];
+        var currId = "";
+        var currName = "";
+        var tableBody;
+        var sample;
+        var disponible = true;
+
+        function cambiar() {
+            if (disponible) {
+                document.getElementById("carga").classList.add("show");
+                document.getElementById("contenido").classList.remove("show");
+            } else {
+                document.getElementById("carga").classList.remove("show");
+                document.getElementById("contenido").classList.add("show");
+            }
+            disponible = !disponible;
+        }
+
+        function getIdValue(node) {
+            return node.parentNode.parentNode.children[0].innerText;
+        }
+
+        function eliminar(node) {
+            let idDelete = getIdValue(node);
+        }
+
+        function modificar(node) {
+            let idMod = getIdValue(node);
+        }
+
+        function setPage(page) {
+            page = Number(page);
+            if (page == currentPage)
+                return;
+            if (page < 1 || page > maxPage)
+                return;
+            let datos = {
+                id: currId,
+                nombre: currName,
+                pagina: page - 1,
+                mostrar: cantShow
+            };
+            if (disponible)
+                cambiar();
+            $.post(
+                "/api/controldeusuarios/fetch",
+                datos,
+                function (data) {
+                    currentPage = page;
+                    let temp;
+                    for (let i = 0; i < navPage.length; i++) {
+                        temp = currentPage + i - 2;
+                        navPage[i].firstChild.innerText = temp;
+                        if (temp < 1 || temp > maxPage)
+                            navPage[i].classList.add("d-none");
+                        else
+                            navPage[i].classList.remove("d-none");
+                    }
+                    tableBody.innerHTML = '';
+                    for (let i = 0; i < data.length; i++) {
+                        sample.children[0].innerText = data[i].idUsuario;
+                        sample.children[1].innerText = data[i].nombreUsuario;
+                        sample.children[2].innerText = data[i].tipoUsuario;
+                        if (data[i].correo.length > 60) {
+                            sample.children[3].innerText = data[i].correo.substring(0, 59) + "...";
+                        } else {
+                            sample.children[3].innerText = data[i].correo;
+                        }
+                        sample.children[4].children[0].href = "/dashboard/controldeusuarios/ver/"+data[i].idUsuario+"/";
+                        tableBody.appendChild(sample.cloneNode(true));
+                    }
+                }
+            ).fail(function () {
+                alert("Error: La página de usuarios no cargo.");
+            }).always(function () {
+                cambiar();
+            });
+        }
+
+        function buscarUsuario() {
+            if (disponible)
+                cambiar();
+            currId = $("#idUsuario").val();
+            currName = $("#nombreUsuario").val();
+            let datos = {
+                id: currId,
+                nombre: currName
+            };
+            $.post(
+                "/api/controldeusuarios/contar",
+                datos,
+                function (data) {
+                    maxPage = Math.floor(data / cantShow)+1;
+                    currentPage = -1;
+                    setPage(1);
+                }
+            ).fail(function () {
+                alert("Error: La búsqueda no fue ejecutada.");
+                cambiar();
+            });
+            return false;
+        }
+
+        $(document).ready(function () {
+            tableBody = document.getElementById("tData");
+            sample = tableBody.children[0].cloneNode(true);
+            contenido = document.getElementById("contenido");
+            var targetPaging = document.getElementById("navPage");
+            for (let i = 2; i < 7; i++) {
+                navPage.push(targetPaging.children[i]);
+            }
+            buscarUsuario();
+        });
+
+    </script>
+</th:block>
+
+</html>

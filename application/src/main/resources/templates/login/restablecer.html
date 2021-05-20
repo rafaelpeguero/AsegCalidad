@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>Mango SLR</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--Logo-->
+    <link rel="icon" type="image/png" href="img/favicon.ico"/>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/css/loginanimate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/o/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/o/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/css/util.css">
+    <link rel="stylesheet" type="text/css" href="/css/formlogin.css">
+    <!--===============================================================================================-->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="/js/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+
+<div class="limiter">
+    <div class="container-slogin">
+        <div class="wrap-login100">
+            <div class="login100-pic rounded-circle center" data-tilt>
+                <img src="/img/user.png" alt="image">
+            </div>
+
+            <form class="login100-form validate-form" onsubmit="return validateForm()">
+                <span class="login100-form-title">
+                        Restablecer Contraseña
+                    </span>
+
+                <p align="center">Ingrese su nueva contraseña de acceso</p>
+                <hr></hr>
+                <div class="wrap-input100 validate-input" data-validate="Se necesita una contraseña">
+                    <label class="wrap-input100" for="pass1">Contraseña nueva</label>
+                    <input id="pass1" class="input100" type="password" name="pass1" placeholder="Contraseña nueva" required>
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"></span>
+                </div>
+                <div class="wrap-input100 validate-input" data-validate="Se necesita una contraseña">
+                    <label class="wrap-input100" for="pass2">Repita su contraseña</label>
+                    <input id="pass2" class="input100" type="password" name="pass2" placeholder="Retipa la Contraseña" required>
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"></span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" id="submit">
+                        Restablecer
+                    </button>
+                </div>
+                <div align="center">
+                    <hr>
+                    <a class="txt2" href="/login">Volver a ingresar sesión</a><br>
+                    <a class="txt3" href="/">Volver a inicio</a><br>
+                    </hr>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateForm(){
+        var pass1 = $('#pass1').val();
+        var pass2 = $('#pass2').val();
+
+        if( pass1 == pass2 ){
+            return restablecer();
+        }else{
+            alert("Las conntraseña no coinciden");
+            // document.getElementById("demo").innerHTML= 'Contraseñas no coinciden';
+        }
+    }
+
+    function restablecer() {
+        var pass1 = $('#pass1').val();
+        var user  = "user";
+
+        var datos = {
+            'clave': pass1,
+            'nombreUsuario': user,
+        };
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify(datos),
+            url: "/api/recuperar/restablecer",
+            success: function (data) {
+                alert(data);
+            }
+        });
+         //alert("Restableciendo...");
+        return false;
+    };
+</script>
+</body>
+</html>

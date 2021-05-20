@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+	<title>Mango SLR</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--Logo-->	
+	<link rel="icon" type="image/png" href="img/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/css/loginanimate.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="/o/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/o/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/css/formlogin.css">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-slogin">
+			<div class="wrap-login100">
+				<div class="login100-pic" data-tilt>
+					<img src="/img/Icons/medicina.png" alt="IMG">
+				</div>
+
+				<form class="login100-form validate-form" action="/login" method="post">
+					<span class="login100-form-title">
+						Inicie sesión
+					</span>
+<!--					Parametros de Login con SprintSecurity-->
+
+						<div class="wrap-input100 validate-input" data-validate = "Usuario valido es requerido">
+							<input class="input100" type="text" name="username" id="username" placeholder="Usuario" maxlength= "19" required>
+							<span class="focus-input100"></span>
+							<span class="symbol-input100">
+							</span>
+						</div>
+
+						<div class="wrap-input100 validate-input" data-validate = "Contraseña es requerida">
+							<input class="input100" type="password" name="password" id="password" placeholder="Contraseña" maxlength= "19" required>
+							<span class="focus-input100"></span>
+							<span class="symbol-input100">
+
+							</span>
+						</div>
+
+						<div class="container-login100-form-btn">
+							<button class="login100-form-btn">
+								Login
+							</button>
+							<!--					Login Mensajes-->
+							<div>
+								<span>
+
+								</span>
+								<div th:if="${param.error}">
+									<span class="badge badge-pill badge-danger">Usuario o Contraseña Invalido</span>
+								</div>
+								<div th:if="${param.logout}">
+									<span class="badge badge-pill badge-success">Se ha cerrado sesion</span>
+								</div>
+							</div>
+							<!--					FIN Login Erroneo-->
+						</div>
+
+					<!--					FIN Parametros de Login con SprintSecurity-->
+
+					<div class="text-center p-t-12">
+						<span class="txt1">
+							Olvidó su
+						</span>
+						<a class="txt2" href="/recuperar">
+							Usuario / Contraseña?
+						</a>
+					</div>
+					<div align="center">
+						<hr>
+						<a class="txt2" href="/registrar">Crea tu cuenta</a><br>
+						<a class="txt3" href="/">Volver a inicio</a><br>
+						</hr>
+					</div>
+			
+				</form>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

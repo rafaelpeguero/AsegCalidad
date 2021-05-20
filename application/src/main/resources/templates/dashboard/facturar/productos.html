@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+    <div class="container">
+        <div class="row">
+            <div class="card">
+                <!--titulo-->
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Seleccionar Productos</h2>
+                </div>
+                <!--Cuerpo-->
+                <div class="card-body table-responsive">
+                    <div class="producto collapse show" id="main">
+                        <form onsubmit="return facturar();">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Id</label>
+                                        <input class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Nombre de usuario</label>
+                                        <input class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="col d-md-none"></div>
+                                <button type="submit" class="btn btn-info">Buscar</button>
+                                <div class="col-12 d-md-none"></div>
+                                <div class="col d-md-none"></div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre Completo</th>
+                            <th>Tipo Usuario</th>
+                            <th>Correo</th>
+                            <th>Nombre de usuario</th>
+                            <th>Celular</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Administrador</td>
+                            <td>Admin</td>
+                            <td>admin@domain.com</td>
+                            <td>adminadmin</td>
+                            <td>809-999-9999</td>
+                            <td class="td-actions text-right">
+                                <button type="button" rel="tooltip" title="" class="btn btn-info btn-link btn-sm" data-original-title="Seleccionar">
+                                    <i class="material-icons">input</i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <a href="/dashboard/facturar" class="btn btn-info pull-right">Volver</a>
+                    <a href="#" class="btn btn-info pull-right">Seleccionar</a>
+
+                    <!--
+                    <div class="row">
+                        <div class="card">
+
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title">Buscar productos</h4>
+                            </div>
+                            <div class="card-body table-responsive">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Facturar</h2>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Usuario</label>
+                                    <input type="text" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Total</label>
+                                    <input type="text" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Cantidad</label>
+                                    <input type="text" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <!--
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <label>About Me</label>
+                              <div class="form-group">
+                                <label class="bmd-label-floating"> Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</label>
+                                <textarea class="form-control" rows="5"></textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        -->
+
+                        <button type="submit" class="btn btn-info pull-right">Actualizar Perfil</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--Fin de contenido principal...-->
+
+<th:block th:fragment="pageScripts">
+    <script>
+        function agregar_producto() {
+            return false;
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

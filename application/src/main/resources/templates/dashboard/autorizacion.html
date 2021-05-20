@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+
+<head>
+
+</head>
+<!--Aquí va el contenido principal...-->
+<div class="content" th:fragment="contenido">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <!--Titulo de la tarjeta-->
+                <div class="card-header card-header-info">
+                    <h2 class="card-title">Autorizaciones</h2>
+                </div>
+                <!--Cuerpo de la tarjeta-->
+                <div class="card-body table-responsive">
+                    <div class="cambio collapse" id="carga">
+                        <h1>Cargando...</h1>
+                    </div>
+                    <div class="cambio collapse show" id="contenido">
+                        <form onsubmit="return buscarProducto();">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">ID</label>
+                                        <input id="idProducto" name="idProducto" class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md">
+                                    <div class="form-group bmd-form-group">
+                                        <label class="bmd-label-floating">Nombre del producto</label>
+                                        <input id="nombreProducto" name="nombreProducto" class="form-control"
+                                            type="text">
+                                    </div>
+                                </div>
+                                <div class="col d-md-none"></div>
+                                <button type="submit" class="btn btn-info">Buscar</button>
+                                <div class="col-12 d-md-none"></div>
+                                <div class="col d-md-none"></div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del producto</th>
+                                <th class="text-center">Disponible</th>
+                                <th class="text-center">Vendedor</th>
+                                <th class="text-center">Empleado</th>
+                                <th class="text-center">Cliente</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tData">
+                            <tr>
+                                <td>A</td>
+                                <td>B</td>
+                                <td class="td-actions text-center">
+                                    <input type="checkbox" class="form-check-input">
+                                </td>
+                                <td class="td-actions text-center">
+                                    <input type="checkbox" class="form-check-input">
+                                </td>
+                                <td class="td-actions text-center">
+                                    <input type="checkbox" class="form-check-input">
+                                </td>
+                                <td class="td-actions text-center">
+                                    <input type="checkbox" class="form-check-input">
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="justify-content-center d-flex">
+                        <nav>
+                            <ul class="pagination" id="navPage">
+                                <li class="page-item border">
+                                    <a onclick="setPage(1);"><i class="fa fa-angle-double-left page-link"></i></a>
+                                </li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(currentPage-1);"><i class="fa fa-angle-left page-link"></i></a>
+                                </li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">1</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">2</a></li>
+                                <li class="page-item border active"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">4</a></li>
+                                <li class="page-item border"><a onclick="setPage(this.innerText);" class="page-link"
+                                        href="#">5</a></li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(currentPage+1);"><i class="fa fa-angle-right page-link"></i></a>
+                                </li>
+                                <li class="page-item border">
+                                    <a onclick="setPage(maxPage);"><i
+                                            class="fa fa-angle-double-right page-link"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <button onclick="return Autorizar();" class="btn btn-info pull-right">Autorizar</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin de contenido principal...-->
+<th:block th:fragment="pageScripts">
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var maxPage = 20;
+        var cantShow = 10;
+        var currentPage;
+        var navPage = [];
+        var currId = "";
+        var currName = "";
+        var tableBody;
+        var sample;
+        var disponible = true;
+        //            0b      D          C         B        A
+        // bit working: [disponible][vendedor][empleado][cliente]
+        var maskA = 1 << 0; // gets the 1st bit
+        var maskB = 1 << 1; // gets the 2nd bit
+        var maskC = 1 << 2; // gets the 3rd bit
+        var maskD = 1 << 3; // gets the 4th bit
+
+        function cambiar() {
+            if (disponible) {
+                document.getElementById("carga").classList.add("show");
+                document.getElementById("contenido").classList.remove("show");
+            } else {
+                document.getElementById("carga").classList.remove("show");
+                document.getElementById("contenido").classList.add("show");
+            }
+            disponible = !disponible;
+        }
+
+        function getIdValue(node) {
+            return node.parentNode.parentNode.children[0].innerText;
+        }
+
+        function eliminar(node) {
+            let idDelete = getIdValue(node);
+        }
+
+        function modificar(node) {
+            let idMod = getIdValue(node);
+        }
+
+        function setPage(page) {
+            page = Number(page);
+            if (page == currentPage)
+                return;
+            if (page < 1 || page > maxPage)
+                return;
+            let datos = {
+                id: currId,
+                nombre: currName,
+                pagina: page - 1,
+                mostrar: cantShow
+            };
+            if (disponible)
+                cambiar();
+            $.post(
+                "/api/producto/fetch",
+                datos,
+                function (data) {
+                    currentPage = page;
+                    let temp;
+                    for (let i = 0; i < navPage.length; i++) {
+                        temp = currentPage + i - 2;
+                        navPage[i].firstChild.innerText = temp;
+                        if (temp < 1 || temp > maxPage)
+                            navPage[i].classList.add("d-none");
+                        else
+                            navPage[i].classList.remove("d-none");
+                    }
+                    tableBody.innerHTML = '';
+                    for (let i = 0; i < data.length; i++) {
+                        sample.children[0].innerText = data[i].idProducto;
+                        sample.children[1].innerText = data[i].nombre;
+                        //sample.children[2].children[0].id = "disponible"+data[i].id;                        
+                        sample.children[2].children[0].checked = data[i].autorizacion != null ? ((data[i].autorizacion & maskD) == maskD) : false; // Verificar si el bit esta encendido.
+                        //sample.children[3].children[0].id = "vendedor"+data[i].id;                        
+                        sample.children[3].children[0].checked = data[i].autorizacion != null ? ((data[i].autorizacion & maskC) == maskC) : false;
+                        //sample.children[4].children[0].id = "empleado"+data[i].id;                        
+                        sample.children[4].children[0].checked = data[i].autorizacion != null ? ((data[i].autorizacion & maskB) == maskB) : false;
+                        //sample.children[5].children[0].id = "cliente"+data[i].id;                        
+                        sample.children[5].children[0].checked = data[i].autorizacion != null ? ((data[i].autorizacion & maskA) == maskA) : false;
+                        //sample.children[4].children[0].href = "/dashboard/controldeproductos/ver/"+data[i].idProducto+"/";
+                        tableBody.appendChild(sample.cloneNode(true));
+                    }
+                }
+            ).fail(function () {
+                alert("Error: La página de productos no cargo.");
+            }).always(function () {
+                cambiar();
+            });
+        }
+
+        function Autorizar() {
+            console.log("contenido de la tabla");
+            var tds = document.querySelectorAll('#tData tr');
+            let datos = {};
+            var result;
+            for (let i = 0; i < tds.length; i++) {
+                result = (tds[i].children[2].children[0].checked ? maskD : 0) +
+                    (tds[i].children[3].children[0].checked ? maskC : 0) +
+                    (tds[i].children[4].children[0].checked ? maskB : 0) +
+                    (tds[i].children[5].children[0].checked ? maskA : 0);
+                datos[String(tds[i].children[0].innerText)] = String(result);
+            }
+            console.log(datos);
+
+            var modal = $('#errorModal');
+            $.ajax({
+                type: "POST",
+                url: "/api/autorizacion/autorizar",
+                contentType: "application/json",
+                data: JSON.stringify(datos),
+                success: function (reply) {
+                    if (reply) {
+                        modal.find('.modal-body p').text('Autorizaciones guardadas.');
+                        modal.find('.modal-header h5').html('Información');
+                    } else {
+                        modal.find('.modal-body p').text('No fue posible autorizar.');
+                        modal.find('.modal-header h5').html('Error');
+                    }
+                    $('#errorModal').modal('show');
+                },
+                fail: function () {
+                    modal.find('.modal-body p').text('No se pudo actualizar las autorizaciones.');
+                    modal.find('.modal-header h5').html('Error');
+                    $('#errorModal').modal('show');
+                }
+            });
+        }
+
+        function buscarProducto() {
+            if (disponible)
+                cambiar();
+            currId = $("#idProducto").val();
+            currName = $("#nombreProducto").val();
+            let datos = {
+                id: currId,
+                nombre: currName
+            };
+            $.post(
+                "/api/producto/contar",
+                datos,
+                function (data) {
+                    maxPage = Math.floor(data / cantShow) + 1;
+                    currentPage = -1;
+                    setPage(1);
+                }
+            ).fail(function () {
+                alert("Error: La búsqueda no fue ejecutada.");
+                cambiar();
+            });
+            return false;
+        }
+
+        $(document).ready(function () {
+            tableBody = document.getElementById("tData");
+            sample = tableBody.children[0].cloneNode(true);
+            contenido = document.getElementById("contenido");
+            var targetPaging = document.getElementById("navPage");
+            for (let i = 2; i < 7; i++) {
+                navPage.push(targetPaging.children[i]);
+            }
+            buscarProducto();
+        });
+    </script>
+</th:block>
+
+
+</body>
+
+</html>
