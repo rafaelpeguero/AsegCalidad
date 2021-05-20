@@ -1,0 +1,7 @@
+html,body {
+    margin: 0;
+    padding: 0;
+    min-height:100vh;
+}
+
+.color-primario,ul.stepper li.active a .circle,ul.stepper li.completed a .circle{background-color:#ff8830 !important}
